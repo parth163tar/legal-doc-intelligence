@@ -15,6 +15,31 @@ app = FastAPI(
     description="RAG-powered legal contract analysis",
     version="1.0.0"
 )
+@app.on_event("startup")
+async def startup_event():
+    """Load demo data into ChromaDB on startup"""
+    from retrieval.vector_store import add_documents, collection
+    
+    # Check if already populated
+    if collection.count() > 0:
+        print(f"✅ ChromaDB already has {collection.count()} chunks")
+        return
+    
+    print("📄 Loading demo contracts into ChromaDB...")
+    demo_chunks = [
+        {"id": "demo_1", "text": "The liability cap shall not exceed $1,000,000. Section 11.3 Liability Cap.", "doc_id": "DEMO_CONTRACT", "chunk_index": 0},
+        {"id": "demo_2", "text": "Either party may terminate this Agreement upon 30 days written notice. Upon termination all licenses cease.", "doc_id": "DEMO_CONTRACT", "chunk_index": 1},
+        {"id": "demo_3", "text": "Each party retains ownership of intellectual property rights owned prior to this Agreement. IP Ownership Section 4.1.", "doc_id": "DEMO_CONTRACT", "chunk_index": 2},
+        {"id": "demo_4", "text": "This Agreement shall be governed by the laws of the State of Delaware. Governing Law Section 12.", "doc_id": "DEMO_CONTRACT", "chunk_index": 3},
+        {"id": "demo_5", "text": "Each party shall indemnify and hold harmless the other from third-party claims arising from breach. Indemnification Section 8.", "doc_id": "DEMO_CONTRACT", "chunk_index": 4},
+        {"id": "demo_6", "text": "Distributor agrees not to engage in competitive business for 2 years after termination. Non-Compete Section 6.", "doc_id": "DEMO_CONTRACT", "chunk_index": 5},
+        {"id": "demo_7", "text": "This Agreement shall automatically renew for one year terms unless terminated with 60 days notice. Auto-Renewal Section 3.", "doc_id": "DEMO_CONTRACT", "chunk_index": 6},
+        {"id": "demo_8", "text": "Neither party may assign this Agreement without prior written consent of the other party. Assignment Section 9.", "doc_id": "DEMO_CONTRACT", "chunk_index": 7},
+        {"id": "demo_9", "text": "All disputes shall be resolved through binding arbitration in Delaware. Dispute Resolution Section 13.", "doc_id": "DEMO_CONTRACT", "chunk_index": 8},
+        {"id": "demo_10", "text": "Confidential information shall not be disclosed to third parties for 5 years after termination. Confidentiality Section 7.", "doc_id": "DEMO_CONTRACT", "chunk_index": 9},
+    ]
+    add_documents(demo_chunks)
+    print(f"✅ Loaded {len(demo_chunks)} demo chunks into ChromaDB")
 
 app.add_middleware(
     CORSMiddleware,
