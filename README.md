@@ -167,7 +167,7 @@ python ingest_to_postgres.py
 |---------|-----|
 | **API** | `https://legal-doc-intelligence-production.up.railway.app` |
 | **API Docs** | `https://legal-doc-intelligence-production.up.railway.app/docs` |
-| **UI** | Streamlit Cloud |
+| **UI** | `https://legaldocintelligence.streamlit.app/` |
 
 ### API Endpoints
 
