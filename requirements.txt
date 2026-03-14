@@ -8,3 +8,7 @@ requests
 certifi
 pydantic
 langchain-text-splitters
+pgvector
+psycopg2-binary
+sentence-transformers
+numpy==1.26.4
