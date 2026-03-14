@@ -1,0 +1,40 @@
+﻿services:
+
+  ollama:
+    image: ollama/ollama
+    container_name: legal-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+  api:
+    build: .
+    container_name: legal-api
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./chroma_db:/app/chroma_db
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000
+
+  ui:
+    build: .
+    container_name: legal-ui
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+    restart: unless-stopped
+    command: streamlit run ui/app.py --server.port 8501 --server.address 0.0.0.0
+
+volumes:
+  ollama_data:
